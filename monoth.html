@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monoalphabetic Cipher Animation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 50px;
+        }
+        .letter {
+            font-size: 2rem;
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 10px;
+            transition: transform 0.5s ease-in-out;
+            position: relative;
+        }
+        .arrow {
+            font-size: 2rem;
+            margin: 0 10px;
+        }
+        .mapping {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .formulas {
+            margin-top: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Monoalphabetic Cipher Animation</h1>
+    <div class="container" id="animation">
+        <!-- Letters will be injected dynamically -->
+    </div>
+    <div class="formulas" id="formulas" style="display: none;">
+        <p><b>Encryption:</b> C = E(P) (Substitution Mapping)</p>
+        <p><b>Decryption:</b> P = D(C) (Reverse Mapping)</p>
+    </div>
+    <script>
+        const plaintext = "HELLO".split("");
+        const mapping = { 'H': 'Q', 'E': 'W', 'L': 'K', 'O': 'Z' }; 
+        
+        const container = document.getElementById("animation");
+        let index = 0;
+        
+        function animateCipher() {
+            if (index < plaintext.length) {
+                let letterDiv = document.createElement("div");
+                letterDiv.classList.add("mapping");
+                letterDiv.innerHTML = `
+                    <span class="letter">${plaintext[index]}</span>
+                    <span class="arrow">→</span>
+                    <span class="letter" style="background-color: #e74c3c;">${mapping[plaintext[index]]}</span>
+                `;
+                container.appendChild(letterDiv);
+                index++;
+                setTimeout(animateCipher, 1000);
+            } else {
+                document.getElementById("formulas").style.display = "block";
+            }
+        }
+        
+        animateCipher();
+    </script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail Fence Cipher Animation</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .rail-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .rail {
+            display: flex;
+            gap: 10px;
+            margin: 5px 0;
+        }
+        .cell {
+            width: 30px;
+            height: 30px;
+            border: 1px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            background-color: white;
+        }
+        .highlight {
+            background-color: yellow;
+        }
+        #ciphertext {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Rail Fence Cipher Animation</h1>
+    <div class="rail-container" id="rail-container"></div>
+    <div id="ciphertext"></div>
+
+    <script>
+        const plaintext = "HELLO WORLD".replace(/\s+/g, ""); // Removing spaces
+        const rails = 3;
+        let railMatrix = Array.from({ length: rails }, () => []);
+        let railIndex = 0, direction = 1;
+        
+        for (let i = 0; i < plaintext.length; i++) {
+            railMatrix[railIndex][i] = plaintext[i];
+            railIndex += direction;
+            if (railIndex === rails - 1 || railIndex === 0) direction *= -1;
+        }
+
+        const railContainer = document.getElementById("rail-container");
+        railMatrix.forEach(row => {
+            const railDiv = document.createElement("div");
+            railDiv.classList.add("rail");
+            for (let i = 0; i < plaintext.length; i++) {
+                const cell = document.createElement("div");
+                cell.classList.add("cell");
+                cell.textContent = row[i] || "";
+                railDiv.appendChild(cell);
+            }
+            railContainer.appendChild(railDiv);
+        });
+        
+        let ciphertext = "";
+        let index = 0;
+        function animateCiphertext() {
+            if (index < plaintext.length) {
+                for (let i = 0; i < rails; i++) {
+                    const row = railContainer.children[i].children;
+                    for (let j = 0; j < row.length; j++) {
+                        if (row[j].textContent && row[j].textContent !== " " && row[j].style.backgroundColor !== "yellow") {
+                            row[j].style.backgroundColor = "yellow";
+                            ciphertext += row[j].textContent;
+                            document.getElementById("ciphertext").textContent = `Ciphertext: ${ciphertext}`;
+                            index++;
+                            setTimeout(animateCiphertext, 500);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+        setTimeout(animateCiphertext, 1000);
+    </script>
+</body>
+</html>

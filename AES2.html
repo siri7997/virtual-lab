@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AES Encryption (CBC Mode) Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .stateMatrix {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .cell {
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+            font-family: monospace;
+        }
+        .step {
+            margin-bottom: 20px;
+        }
+        .step h3 {
+            margin-top: 0;
+        }
+        input {
+            width: 300px;
+            padding: 10px;
+            margin: 5px 0;
+            font-size: 16px;
+            border: 1px solid #999;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>AES Encryption (CBC Mode) Visualization</h1>
+    <div class="container">
+        <input type="text" id="plaintext" placeholder="Enter Text (16 characters)" maxlength="16">
+        <input type="text" id="key" placeholder="Enter Key (16 characters)" maxlength="16">
+        <button id="encryptButton">Encrypt</button>
+    </div>
+    <div id="stepsContainer" class="container">
+        <h2>Steps</h2>
+    </div>
+    <script>
+        document.getElementById('encryptButton').addEventListener('click', startEncryption);
+        
+        function startEncryption() {
+            const plaintext = document.getElementById('plaintext').value;
+            const key = document.getElementById('key').value;
+            if (!plaintext || !key || plaintext.length !== 16 || key.length !== 16) {
+                alert('Please enter valid plaintext and key (16 characters each).');
+                return;
+            }
+            document.getElementById('stepsContainer').innerHTML = '';
+            
+            const iv = generateIV();
+            displayStep("Generated IV", createStateMatrix(iv));
+            
+            const paddedPlaintext = padPlaintext(plaintext);
+            displayStep("Padded Plaintext Matrix (in hex)", createStateMatrix(paddedPlaintext.split('').map(c => c.charCodeAt(0))));
+            
+            const encryptedBlocks = aesEncryptCBC(paddedPlaintext, key, iv);
+            displayStep("Final Ciphertext (IV + Encrypted Blocks) in hex", createStateMatrix(encryptedBlocks));
+        }
+        
+        function generateIV() {
+            return Array.from({ length: 16 }, () => Math.floor(Math.random() * 256));
+        }
+        
+        function padPlaintext(text) {
+            const paddingLength = 16 - (text.length % 16);
+            return text + String.fromCharCode(paddingLength).repeat(paddingLength);
+        }
+        
+        function aesEncryptCBC(plaintext, key, iv) {
+            let previousBlock = iv;
+            let ciphertext = [];
+            for (let i = 0; i < plaintext.length; i += 16) {
+                let block = plaintext.slice(i, i + 16).split('').map((c, j) => c.charCodeAt(0) ^ previousBlock[j]);
+                block = applyAES(block, key);
+                previousBlock = block;
+                ciphertext.push(...block);
+            }
+            return iv.concat(ciphertext);
+        }
+        
+        function applyAES(block, key) {
+            let state = createStateMatrix(block);
+            displayStep("Initial State Matrix", state);
+            
+            state = addRoundKey(state, key);
+            displayStep("AddRoundKey Transformation", state);
+            
+            for (let round = 1; round <= 10; round++) {
+                state = applySubBytes(state);
+                displayStep(`Round ${round}: SubBytes Transformation`, state);
+                
+                state = applyShiftRows(state);
+                displayStep(`Round ${round}: ShiftRows Transformation`, state);
+                
+                if (round < 10) {
+                    state = applyMixColumns(state);
+                    displayStep(`Round ${round}: MixColumns Transformation`, state);
+                }
+                
+                state = addRoundKey(state, key); // Simplified for demonstration; actual AES uses different keys for each round
+                displayStep(`Round ${round}: AddRoundKey Transformation`, state);
+            }
+            
+            return matrixToArray(state);
+        }
+        
+        function applySubBytes(matrix) {
+            // Simplified for demonstration; actual AES uses an S-Box
+            return matrix.map(row => row.map(cell => (cell + 1) % 256));
+        }
+        
+        function applyShiftRows(matrix) {
+            return [
+                matrix[0],
+                [matrix[1][1], matrix[1][2], matrix[1][3], matrix[1][0]],
+                [matrix[2][2], matrix[2][3], matrix[2][0], matrix[2][1]],
+                [matrix[3][3], matrix[3][0], matrix[3][1], matrix[3][2]]
+            ];
+        }
+        
+        function applyMixColumns(matrix) {
+            // Simplified for demonstration; actual AES uses a specific matrix multiplication
+            return matrix.map(row => row.reverse());
+        }
+        
+        function addRoundKey(matrix, key) {
+            const keyMatrix = createStateMatrix(key.split('').map(c => c.charCodeAt(0)));
+            return matrix.map((row, i) => row.map((cell, j) => cell ^ keyMatrix[i][j]));
+        }
+        
+        function createStateMatrix(input) {
+            return Array.from({ length: 4 }, (_, i) => input.slice(i * 4, (i + 1) * 4));
+        }
+        
+        function matrixToArray(matrix) {
+            return matrix.flat();
+        }
+        
+        function displayStep(title, matrix) {
+            const container = document.getElementById('stepsContainer');
+            const stepDiv = document.createElement('div');
+            stepDiv.classList.add('step');
+            const titleElement = document.createElement('h3');
+            titleElement.textContent = title;
+            stepDiv.appendChild(titleElement);
+            stepDiv.appendChild(createMatrixElement(matrix));
+            container.appendChild(stepDiv);
+        }
+        
+        function createMatrixElement(matrix) {
+            const matrixDiv = document.createElement('div');
+            matrixDiv.classList.add('stateMatrix');
+            matrix.forEach(row => {
+                row.forEach(cell => {
+                    const cellDiv = document.createElement('div');
+                    cellDiv.classList.add('cell');
+                    cellDiv.textContent = cell.toString(16).padStart(2, '0');
+                    matrixDiv.appendChild(cellDiv);
+                });
+            });
+            return matrixDiv;
+        }
+    </script>
+</body>
+</html>

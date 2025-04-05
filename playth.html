@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playfair Cipher Animation</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            border: 2px solid black;
+            margin-top: 20px;
+        }
+        .rules, .example, .encrypted-text {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .encrypted-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h2>Playfair Cipher</h2>
+    <div class="rules">
+        <h3>Rules:</h3>
+        <p>1. If both letters are in the same row, replace them with the letters to their right.</p>
+        <p>2. If both letters are in the same column, replace them with the letters below.</p>
+        <p>3. Otherwise, form a rectangle and swap the letters.</p>
+    </div>
+    <div class="example">
+        <h3>Example:</h3>
+        <p>Plaintext: HELLO</p>
+        <p>Converted Pairs: HE LX LO</p>
+    </div>
+    <canvas id="playfairCanvas" width="500" height="500"></canvas>
+    <div class="encrypted-text" id="encryptedText">Encrypted Text: </div>
+    <script>
+        const canvas = document.getElementById("playfairCanvas");
+        const ctx = canvas.getContext("2d");
+        const encryptedTextDiv = document.getElementById("encryptedText");
+
+        const grid = [
+            ['P', 'L', 'A', 'Y', 'F'],
+            ['I', 'R', 'C', 'H', 'B'],
+            ['D', 'E', 'G', 'K', 'M'],
+            ['N', 'O', 'Q', 'S', 'T'],
+            ['U', 'V', 'W', 'X', 'Z']
+        ];
+
+        const pairs = [['H', 'E'], ['L', 'X'], ['L', 'O']]; // "HELLO" becomes "HE LX LO"
+        const encryptedPairs = [['K', 'D'], ['O', 'Z'], ['S', 'Q']]; // Example encryption output
+        let step = 0;
+
+        function drawGrid() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.font = "20px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            for (let i = 0; i < 5; i++) {
+                for (let j = 0; j < 5; j++) {
+                    ctx.strokeRect(j * 80 + 50, i * 80 + 50, 80, 80);
+                    ctx.fillText(grid[i][j], j * 80 + 90, i * 80 + 90);
+                }
+            }
+        }
+
+        function highlightPair(pair) {
+            for (let i = 0; i < 5; i++) {
+                for (let j = 0; j < 5; j++) {
+                    if (grid[i][j] === pair[0] || grid[i][j] === pair[1]) {
+                        ctx.fillStyle = "rgba(255, 0, 0, 0.3)";
+                        ctx.fillRect(j * 80 + 50, i * 80 + 50, 80, 80);
+                        ctx.fillStyle = "black";
+                    }
+                }
+            }
+        }
+
+        function animateEncryption() {
+            if (step < pairs.length) {
+                drawGrid();
+                highlightPair(pairs[step]);
+                encryptedTextDiv.innerText = `Encrypted Text: ${encryptedPairs.slice(0, step + 1).map(pair => pair.join('')).join(' ')}`;
+                step++;
+                setTimeout(animateEncryption, 1500);
+            }
+        }
+
+        drawGrid();
+        setTimeout(animateEncryption, 1500);
+    </script>
+</body>
+</html>

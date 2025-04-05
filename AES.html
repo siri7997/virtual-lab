@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Encryption Standard (AES)</title>
+    <!-- Breadcrumb Navigation -->
+<ul class="breadcrumbs">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="home.html">Cryptography</a></li>
+    <li><a href="home.html#theory" onclick="showContent('theory')">Experiments</a></li>
+</ul>
+
+<!-- Breadcrumbs CSS (Add to your existing CSS) -->
+<style>
+    .breadcrumbs {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        list-style: none;
+        display: flex;
+        gap: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 10px 15px;
+        border-radius: 10px;
+        backdrop-filter: blur(5px);
+        z-index: 2;
+    }
+
+    .breadcrumbs li {
+        display: inline;
+    }
+
+    .breadcrumbs a {
+        text-decoration: none;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .breadcrumbs a:hover {
+        background: rgba(255, 255, 255, 0.4);
+    }
+</style>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            animation: backgroundAnimation 10s infinite alternate;
+        }
+
+        @keyframes backgroundAnimation {
+            0% { background-position: left; }
+            100% { background-position: right; }
+        }
+        p, ul {
+            font-size: 1.2em; 
+        }
+        p { 
+            margin: 2em 0;
+        }
+        p {
+            line-height: 2; 
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+            opacity: 0;
+            animation: fadeIn 1.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .left-menu {
+            width: 250px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .left-menu a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .left-menu a:hover {
+            background-color: #ff9800;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .right-content {
+            flex: 1;
+            padding: 20px;
+            border-left: 1px solid #ccc;
+            background-color: white;
+            opacity: 0;
+            animation: slideIn 1s forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            font-size: 2.5em;
+            animation: bounce 1.5s infinite alternate;
+        }
+        h2 {
+            text-align: center;
+            color: #ffffff;
+            font-size: 2.5em;
+            animation: bounce 1.5s infinite alternate;
+        }
+        .breadcrumb {
+            padding: 10px;
+            background: #fff;
+            margin-bottom: 10px;
+        }
+        .breadcrumb a {
+            text-decoration: none;
+            color: #cad6e3;
+            margin-right: 5px;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        @keyframes bounce {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-10px); }
+        }
+
+        .hidden {
+            display: none;
+        }
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            animation: backgroundAnimation 10s infinite alternate;
+        }
+
+        @keyframes backgroundAnimation {
+            0% { background-position: left; }
+            100% { background-position: right; }
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+            opacity: 0;
+            animation: fadeIn 1.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .left-menu {
+            width: 200px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .left-menu a {
+            display: block;
+            padding: 8px 16px;
+            text-decoration: none;
+            color: #333;
+            margin-bottom: 5px;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .left-menu a:hover {
+            background-color: #ff9800;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .right-content {
+            flex: 1;
+            padding: 20px;
+            border-left: 1px solid #ccc;
+            background-color: white;
+            opacity: 0;
+            animation: slideIn 1s forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        h1 {
+            color: #ffffff;
+            text-align: center;
+            font-size: 2.5em;
+            animation: bounce 1.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-10px); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        p, ul {
+            font-size: 1.2em;
+        }
+        p {
+            margin: 2em 0;
+            line-height: 2;
+        }
+
+        .content-divs {
+            margin-top: 20px;
+            opacity: 0;
+            animation: fadeInContent 1s forwards;
+        }
+
+        @keyframes fadeInContent {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Advanced Encryption Standard (AES)</h1>
+    <div class="container">
+        <div class="left-menu">
+            <a href="#" onclick="showContent('aim')">Aim</a>
+            <a href="#" onclick="showContent('objectives')">Objectives</a>
+            <a href="#" onclick="showContent('procedure')">Procedure</a>
+            <a href="#" onclick="showContent('theory')">Theory</a>
+            <a href="AES2.html" onclick="showContent('security')">Simulation</a>
+            
+        </div>
+        <div class="right-content">
+            <div id="aim" class="hidden content-divs">
+                <h2>Aim</h2>
+                <p>The primary aim of AES is to provide a secure method for encrypting data, ensuring confidentiality and integrity by using symmetric-key block cipher techniques.</p>
+            </div>
+            <div id="objectives" class="hidden content-divs">
+                <h2>Objectives</h2>
+                <p>Data Confidentiality: Protect data from unauthorized access.
+                    <br>
+                    Data Integrity: Ensure that data is not modified during transmission or storage.
+                    <br>
+                    Efficiency: Provide fast and efficient encryption and decryption processes.
+                    <br>
+                    Flexibility: Support various key sizes (128, 192, and 256 bits) for different security needs.</p>
+            </div>
+            <div id="procedure" class="hidden content-divs">
+                <h2>Procedure</h2>
+                <p><h3>Key Expansion:</h3> The encryption key is expanded into a set of round keys.
+
+                    <h3>Data Preparation:</h3>> The plaintext is divided into fixed-size blocks (typically 128 bits).
+                    
+                    <h3>Initial Round:</h3>
+                    
+                    <h3>AddRoundKey:</h3> The plaintext block is XORed with the initial round key.
+                    
+                    <h3>Main Rounds (1-9):</h3>>
+                    
+                    <h3>SubBytes:</h3> Substitution of each byte with a value from an S-box.
+                    
+                    <h3>ShiftRows:</h3> Circular shift of rows by different offsets.
+                    
+                    <h3>MixColumns:</h3> Linear transformation of each column.
+                    
+                    <h3>AddRoundKey:</h3> XOR with the round key.
+                    
+                    <h3>Final Round:</h3>
+                    
+                    <h3>SubBytes:</h3> Substitution of each byte.
+                    
+                    <h3>ShiftRows:</h3> Circular shift of rows.
+                    
+                    <h3>AddRoundKey:</h3> XOR with the final round key.
+                    
+                    <h3>Output:</h3> The final encrypted block.</p>
+            </div>
+            <div id="theory" class="hidden content-divs">
+                <h2>Theory</h2>
+                <iframe src="AESth.html" width="100%" height="500px" style="border: none;"></iframe>
+            </div>
+            <div id="security" class="hidden content-divs">
+                <h2>Security</h2>
+                <p>AES is widely considered secure due to its robust design and large key sizes. However, side-channel attacks and quantum computing pose potential future threats.</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        function showContent(id) {
+            let contentDivs = document.querySelectorAll('.content-divs');
+            contentDivs.forEach(div => {
+                div.classList.add('hidden');
+            });
+            let selectedDiv = document.getElementById(id);
+            if (selectedDiv) {
+                selectedDiv.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

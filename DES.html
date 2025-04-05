@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DES</title>
+    <!-- Breadcrumb Navigation -->
+<ul class="breadcrumbs">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="home.html">Cryptography</a></li>
+    <li><a href="home.html#theory" onclick="showContent('theory')">Experiments</a></li>
+</ul>
+
+<!-- Breadcrumbs CSS (Add to your existing CSS) -->
+<style>
+    .breadcrumbs {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        list-style: none;
+        display: flex;
+        gap: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 10px 15px;
+        border-radius: 10px;
+        backdrop-filter: blur(5px);
+        z-index: 2;
+    }
+
+    .breadcrumbs li {
+        display: inline;
+    }
+
+    .breadcrumbs a {
+        text-decoration: none;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .breadcrumbs a:hover {
+        background: rgba(255, 255, 255, 0.4);
+    }
+</style>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            animation: backgroundAnimation 10s infinite alternate;
+        }
+
+        @keyframes backgroundAnimation {
+            0% { background-position: left; }
+            100% { background-position: right; }
+        }
+        p, ul {
+            font-size: 1.2em; 
+        }
+        p { 
+            margin: 2em 0;
+        }
+        p {
+            line-height: 2; 
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+            opacity: 0;
+            animation: fadeIn 1.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .left-menu {
+            width: 250px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .left-menu a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .left-menu a:hover {
+            background-color: #ff9800;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .right-content {
+            flex: 1;
+            padding: 20px;
+            border-left: 1px solid #ccc;
+            background-color: white;
+            opacity: 0;
+            animation: slideIn 1s forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            font-size: 2.5em;
+            animation: bounce 1.5s infinite alternate;
+        }
+        h2 {
+            text-align: center;
+            color: #ffffff;
+            font-size: 2.5em;
+            animation: bounce 1.5s infinite alternate;
+        }
+        .breadcrumb {
+            padding: 10px;
+            background: #fff;
+            margin-bottom: 10px;
+        }
+        .breadcrumb a {
+            text-decoration: none;
+            color: #cad6e3;
+            margin-right: 5px;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        @keyframes bounce {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-10px); }
+        }
+
+        .hidden {
+            display: none;
+        }
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            animation: backgroundAnimation 10s infinite alternate;
+        }
+
+        @keyframes backgroundAnimation {
+            0% { background-position: left; }
+            100% { background-position: right; }
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+            opacity: 0;
+            animation: fadeIn 1.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .left-menu {
+            width: 200px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .left-menu a {
+            display: block;
+            padding: 8px 16px;
+            text-decoration: none;
+            color: #333;
+            margin-bottom: 5px;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .left-menu a:hover {
+            background-color: #ff9800;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .right-content {
+            flex: 1;
+            padding: 20px;
+            border-left: 1px solid #ccc;
+            background-color: white;
+            opacity: 0;
+            animation: slideIn 1s forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        h1 {
+            color: #ffffff;
+            text-align: center;
+            font-size: 2.5em;
+            animation: bounce 1.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-10px); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        p, ul {
+            font-size: 1.2em;
+        }
+        p {
+            margin: 2em 0;
+            line-height: 2;
+        }
+
+        .content-divs {
+            margin-top: 20px;
+            opacity: 0;
+            animation: fadeInContent 1s forwards;
+        }
+
+        @keyframes fadeInContent {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <h1>DES (Data Encryption Standard)</h1>
+    <div class="container">
+        <div class="left-menu">
+            <a href="#" onclick="showContent('aim')">Aim</a>
+            <a href="#" onclick="showContent('objectives')">Objectives</a>
+            <a href="#" onclick="showContent('procedure')">Procedure</a>
+            <a href="#" onclick="showContent('theory')">Theory</a> <!-- Corrected -->
+            <a href="des22.html">Simulation</a>
+        </div>
+        <div class="right-content">
+            <div id="aim" class="hidden content-divs">
+                <h2>Aim</h2>
+                <p>The aim of studying the Data Encryption Standard (DES) is to understand its design, implementation, and operational mechanisms as a symmetric-key block cipher, while evaluating its historical significance and security implications in modern cryptography.</p>
+            </div>
+            <div id="objectives" class="hidden content-divs">
+                <h2>Objectives</h2>
+                <p>Understand the Structure: To explain the architecture of DES, including its block size, key size, and the Feistel network structure.
+                    <br>
+                    Analyze Encryption and Decryption Processes: To detail the steps involved in encrypting and decrypting data using DES.
+                    <br>
+                    Evaluate Security Features: To assess the strengths and weaknesses of DES, particularly its key length and susceptibility to various attacks.
+                    <br>
+                    Explore Historical Context: To investigate the development of DES and its impact on cryptographic practices and standards.
+                    <br>
+                    Compare with Modern Standards: To compare DES with newer encryption standards like AES (Advanced Encryption Standard) regarding security and efficiency.</p>
+            </div>
+            <div id="procedure" class="hidden content-divs">
+                <h2>Procedure</h2>
+                <p><h3>Key Generation:</h3> Generate a 64-bit key for encryption, noting that only 56 bits are used for the actual encryption process.
+                    <br>
+                    <h3>Initial Permutation:</h3> Apply an initial permutation to the plaintext before starting the encryption rounds.
+                    <br>
+                    <h3>16 Rounds of Processing:</h3>
+                    <br>
+                    For each of the 16 rounds, perform a series of substitutions and permutations using S-boxes and P-boxes.
+                    <br>
+                    Use a round key derived from the main key for each round through a key scheduling algorithm.
+                    <br>
+                    <h3>Final Permutation:</h3> After completing all rounds, apply a final permutation to produce the cipher text.
+                    <br>
+                    <h3>Decryption Process:</h3> The decryption process uses the same steps as encryption but applies the round keys in reverse order.</p>
+            </div>
+
+            <div id="theory" class="hidden content-divs"> 
+                <h2>Theory</h2>
+                
+                
+                <iframe src="DESth.html" width="100%" height="500px" style="border: none;"></iframe>
+                
+                <br><br>
+                
+                <!-- Display Images -->
+                <img src="des1.jpg" alt="DES Step 1">
+                <img src="des2.jpg" alt="DES Step 2">
+                <img src="des3.jpg" alt="DES Step 3">
+            </div>
+        </div>
+    </div>
+    <script>
+        function showContent(id) {
+            let contentDivs = document.querySelectorAll('.content-divs');
+            contentDivs.forEach(div => {
+                div.classList.add('hidden');
+            });
+            let selectedDiv = document.getElementById(id);
+            if (selectedDiv) {
+                selectedDiv.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

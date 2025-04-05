@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One-Time Pad Encryption Animation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            display: inline-block;
+            text-align: left;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .step {
+            display: none;
+            font-size: 20px;
+            margin-top: 10px;
+        }
+        .highlight {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>One-Time Pad Encryption</h2>
+        <p><strong>Plaintext:</strong> MEET</p>
+        <p><strong>Key:</strong> BDUF</p>
+        <div id="steps">
+            <p class="step">M (12) + B (1) = <span class="highlight">N (13)</span></p>
+            <p class="step">E (4) + D (3) = <span class="highlight">H (7)</span></p>
+            <p class="step">E (4) + U (20) = <span class="highlight">Y (24)</span></p>
+            <p class="step">T (19) + F (5) = <span class="highlight">Y (24)</span></p>
+        </div>
+        <h3 id="result" style="display: none;">Ciphertext: <span class="highlight">NHYY</span></h3>
+    </div>
+    
+    <script>
+        let steps = document.querySelectorAll('.step');
+        let result = document.getElementById('result');
+        let index = 0;
+
+        function showSteps() {
+            if (index < steps.length) {
+                steps[index].style.display = 'block';
+                index++;
+                setTimeout(showSteps, 2000);
+            } else {
+                result.style.display = 'block';
+            }
+        }
+        
+        setTimeout(showSteps, 2000);
+    </script>
+</body>
+</html>

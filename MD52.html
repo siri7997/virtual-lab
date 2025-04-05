@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MD5 Hashing Simulator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+            margin: 0;
+        }
+        .container {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            background: white;
+            padding: 20px;
+            border: 2px solid #333;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        input {
+            width: 300px;
+            padding: 10px;
+            margin: 5px 0;
+            font-size: 16px;
+            border: 1px solid #999;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .process-container {
+            width: 800px;
+            padding: 20px;
+            border: 2px solid #333;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #333;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        .calculation {
+            font-family: monospace;
+            background-color: #f9f9f9;
+            padding: 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="input-container">
+            <h2>Enter Text</h2>
+            <label>Plaintext:</label>
+            <input type="text" id="text" placeholder="Enter text">
+            <button onclick="generateMD5()">Generate MD5 Hash</button>
+        </div>
+
+        <div class="process-container">
+            <h2>Process Steps</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Step</th>
+                        <th>Description</th>
+                        <th>Values</th>
+                    </tr>
+                </thead>
+                <tbody id="steps"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script>
+        function padMessage(message) {
+            let originalLength = message.length * 8;
+            message += "\x80";
+            while ((message.length * 8) % 512 !== 448) {
+                message += "\x00";
+            }
+            return { padded: message, originalLength: originalLength };
+        }
+
+        function appendLength(paddedMessage, originalLength) {
+            let lengthBits = originalLength.toString(16).padStart(16, "0");
+            return paddedMessage + lengthBits.match(/../g).reverse().join("");
+        }
+
+        function displayStep(step, text, value) {
+            const stepsTable = document.getElementById("steps");
+            const row = document.createElement("tr");
+            row.innerHTML = `<td><strong>Step ${step}</strong></td><td>${text}</td><td class="calculation">${value}</td>`;
+            stepsTable.appendChild(row);
+        }
+
+        function processBlock(block, A, B, C, D) {
+            let words = [];
+            for (let i = 0; i < 64; i += 4) {
+                words.push(
+                    block.charCodeAt(i) |
+                    (block.charCodeAt(i + 1) << 8) |
+                    (block.charCodeAt(i + 2) << 16) |
+                    (block.charCodeAt(i + 3) << 24)
+                );
+            }
+
+            let AA = A, BB = B, CC = C, DD = D;
+
+            // Round 1
+            for (let i = 0; i < 16; i++) {
+                let F = (B & C) | (~B & D);
+                let g = i;
+                let temp = D;
+                D = C;
+                C = B;
+                B = B + ((A + F + words[g] + 0xD76AA478) << 7 | (A + F + words[g] + 0xD76AA478) >>> 25);
+                A = temp;
+            }
+
+            // Round 2
+            for (let i = 16; i < 32; i++) {
+                let F = (D & B) | (~D & C);
+                let g = (5 * i + 1) % 16;
+                let temp = D;
+                D = C;
+                C = B;
+                B = B + ((A + F + words[g] + 0xE8C7B756) << 12 | (A + F + words[g] + 0xE8C7B756) >>> 20);
+                A = temp;
+            }
+
+            // Round 3
+            for (let i = 32; i < 48; i++) {
+                let F = B ^ C ^ D;
+                let g = (3 * i + 5) % 16;
+                let temp = D;
+                D = C;
+                C = B;
+                B = B + ((A + F + words[g] + 0x242070DB) << 17 | (A + F + words[g] + 0x242070DB) >>> 15);
+                A = temp;
+            }
+
+            // Round 4
+            for (let i = 48; i < 64; i++) {
+                let F = C ^ (B | ~D);
+                let g = (7 * i) % 16;
+                let temp = D;
+                D = C;
+                C = B;
+                B = B + ((A + F + words[g] + 0xC1BDCEEE) << 22 | (A + F + words[g] + 0xC1BDCEEE) >>> 10);
+                A = temp;
+            }
+
+            A = (A + AA) >>> 0;
+            B = (B + BB) >>> 0;
+            C = (C + CC) >>> 0;
+            D = (D + DD) >>> 0;
+
+            return { A, B, C, D };
+        }
+
+        function generateMD5() {
+            const text = document.getElementById("text").value;
+            if (!text) {
+                alert("Please enter text.");
+                return;
+            }
+            
+            document.getElementById("steps").innerHTML = "";
+            
+            // Step 1: Append Padding Bits
+            let { padded, originalLength } = padMessage(text);
+            displayStep(1, "Append Padding Bits: Message is padded to 448 mod 512.", `
+                Original Length: ${originalLength} bits<br>
+                Padded Message: ${padded.split("").map(c => c.charCodeAt(0)).join(" ")}
+            `);
+            
+            // Step 2: Append Length Bits
+            let finalMessage = appendLength(padded, originalLength);
+            displayStep(2, "Append Length: 64-bit length added to the padded message.", `
+                Final Message: ${finalMessage.split("").map(c => c.charCodeAt(0)).join(" ")}<br>
+                Length in Hex: ${originalLength.toString(16).padStart(16, "0")}
+            `);
+            
+            // Step 3: Initialize MD Buffer
+            let A = 0x67452301;
+            let B = 0xEFCDAB89;
+            let C = 0x98BADCFE;
+            let D = 0x10325476;
+            displayStep(3, "Initialize MD Buffer: A, B, C, D registers.", `
+                A = ${A.toString(16)}<br>
+                B = ${B.toString(16)}<br>
+                C = ${C.toString(16)}<br>
+                D = ${D.toString(16)}
+            `);
+            
+            // Step 4: Split Message into Blocks
+            let blockSize = 512; // bits
+            let numBlocks = Math.ceil(finalMessage.length * 8 / blockSize);
+            displayStep(4, "Split Message into Blocks: Each block is 512 bits (64 bytes).", `
+                Block Size: ${blockSize} bits<br>
+                Number of Blocks: ${numBlocks}
+            `);
+            
+            // Step 5: Process Each Block
+            for (let i = 0; i < numBlocks; i++) {
+                let block = finalMessage.substr(i * 64, 64);
+                displayStep(5, `Process Block ${i + 1}: Apply MD5 compression function.`, `
+                    Block Data: ${block.split("").map(c => c.charCodeAt(0)).join(" ")}
+                `);
+                
+                let { A: newA, B: newB, C: newC, D: newD } = processBlock(block, A, B, C, D);
+                displayStep(6, `Update Registers After Block ${i + 1}:`, `
+                    A = ${newA.toString(16)}<br>
+                    B = ${newB.toString(16)}<br>
+                    C = ${newC.toString(16)}<br>
+                    D = ${newD.toString(16)}
+                `);
+                
+                A = newA;
+                B = newB;
+                C = newC;
+                D = newD;
+            }
+            
+            // Step 7: Final MD5 Hash
+            let hash = (A.toString(16) + B.toString(16) + C.toString(16) + D.toString(16)).padStart(32, "0");
+            displayStep(7, "Final MD5 Hash Computed.", `
+                Hash: ${hash}<br>
+                Hash Length: 128 bits
+            `);
+        }
+    </script>
+
+</body>
+</html>

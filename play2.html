@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Playfair Cipher Visualizer</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(120deg, #1f1c2c, #928dab);
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    h1 {
+  font-size: 3rem;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #ff7eb3, #ff758c);
+  background-clip: text; /* ✅ Standard property */
+  -webkit-background-clip: text; /* ✅ Vendor prefix for Safari/Chrome */
+  -webkit-text-fill-color: transparent;
+}
+
+
+    .container {
+      max-width: 1000px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 20px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .input-section {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    input, textarea, button {
+      padding: 10px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    button {
+      background: linear-gradient(90deg, #ff758c, #ff7eb3);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #ff5f6d, #ffc371);
+      transform: scale(1.05);
+    }
+
+    .mode-select {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .mode-select label {
+      font-size: 1rem;
+    }
+
+    .mode-select input {
+      margin-right: 8px;
+      transform: scale(1.2);
+    }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: repeat(5, 50px);
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      margin-bottom: 30px;
+    }
+
+    .matrix-cell {
+      background: #fff;
+      color: #333;
+      font-weight: bold;
+      text-align: center;
+      line-height: 50px;
+      border-radius: 8px;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .steps-container {
+      margin-top: 20px;
+    }
+
+    .step {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .step.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .box {
+      padding: 10px 15px;
+      background: #fff;
+      color: #333;
+      border-radius: 10px;
+      font-weight: bold;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .arrow {
+      font-size: 1.5rem;
+    }
+
+    .output-text {
+      margin-top: 30px;
+      font-size: 1.5rem;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Playfair Cipher Visualizer</h1>
+  <div class="container">
+    <div class="input-section">
+      <label for="key">Enter Key:</label>
+      <input type="text" id="key" placeholder="e.g., MONARCHY" />
+      <label for="text">Enter Text:</label>
+      <textarea id="text" rows="3" placeholder="e.g., Hide the gold in the tree stump"></textarea>
+
+      <div class="mode-select">
+        <label><input type="radio" name="mode" value="encrypt" checked /> Encrypt</label>
+        <label><input type="radio" name="mode" value="decrypt" /> Decrypt</label>
+      </div>
+
+      <button onclick="startPlayfair()">Start</button>
+    </div>
+
+    <div id="matrix" class="matrix"></div>
+    <div class="steps-container" id="steps-container"></div>
+    <div class="output-text" id="output-text"></div>
+  </div>
+
+  <script>
+    function prepareText(text, mode) {
+      let prepared = text.toUpperCase().replace(/[^A-Z]/g, '').replace(/J/g, 'I');
+      let pairs = [];
+      for (let i = 0; i < prepared.length; i += 2) {
+        let a = prepared[i];
+        let b = prepared[i + 1];
+        if (!b || a === b) {
+          b = 'X';
+          i--;
+        }
+        pairs.push([a, b]);
+      }
+      return pairs;
+    }
+
+    function generateMatrix(key) {
+      key = key.toUpperCase().replace(/[^A-Z]/g, '').replace(/J/g, 'I');
+      let seen = new Set();
+      let matrix = [];
+      for (let char of key + "ABCDEFGHIKLMNOPQRSTUVWXYZ") {
+        if (!seen.has(char)) {
+          seen.add(char);
+          matrix.push(char);
+        }
+      }
+      return Array.from({ length: 5 }, (_, i) => matrix.slice(i * 5, i * 5 + 5));
+    }
+
+    function displayMatrix(matrix) {
+      const matrixDiv = document.getElementById("matrix");
+      matrixDiv.innerHTML = '';
+      matrix.flat().forEach(letter => {
+        const cell = document.createElement('div');
+        cell.className = 'matrix-cell';
+        cell.textContent = letter;
+        matrixDiv.appendChild(cell);
+      });
+    }
+
+    function findPosition(matrix, letter) {
+      for (let r = 0; r < 5; r++) {
+        for (let c = 0; c < 5; c++) {
+          if (matrix[r][c] === letter) return [r, c];
+        }
+      }
+      return [-1, -1];
+    }
+
+    function processPair(pair, matrix, mode) {
+      const [a, b] = pair;
+      let [r1, c1] = findPosition(matrix, a);
+      let [r2, c2] = findPosition(matrix, b);
+      let newA, newB;
+
+      if (r1 === r2) {
+        newA = matrix[r1][(c1 + (mode === 'encrypt' ? 1 : 4)) % 5];
+        newB = matrix[r2][(c2 + (mode === 'encrypt' ? 1 : 4)) % 5];
+      } else if (c1 === c2) {
+        newA = matrix[(r1 + (mode === 'encrypt' ? 1 : 4)) % 5][c1];
+        newB = matrix[(r2 + (mode === 'encrypt' ? 1 : 4)) % 5][c2];
+      } else {
+        newA = matrix[r1][c2];
+        newB = matrix[r2][c1];
+      }
+
+      return [newA, newB, r1, c1, r2, c2];
+    }
+
+    function startPlayfair() {
+      const key = document.getElementById("key").value.trim();
+      const text = document.getElementById("text").value.trim();
+      const mode = document.querySelector('input[name="mode"]:checked').value;
+      const stepsContainer = document.getElementById("steps-container");
+      const outputText = document.getElementById("output-text");
+
+      if (!key || !text) {
+        alert("Please enter both key and text.");
+        return;
+      }
+
+      const pairs = prepareText(text, mode);
+      const matrix = generateMatrix(key);
+      displayMatrix(matrix);
+
+      stepsContainer.innerHTML = '';
+      outputText.innerText = '';
+      let result = '';
+
+      pairs.forEach((pair, i) => {
+        setTimeout(() => {
+          const [newA, newB, r1, c1, r2, c2] = processPair(pair, matrix, mode);
+          result += newA + newB;
+
+          const step = document.createElement('div');
+          step.classList.add('step');
+          step.innerHTML = `
+            <div class="box">${pair[0]}${pair[1]}</div>
+            <div class="arrow">→</div>
+            <div class="box">${newA}${newB}</div>
+            <div class="arrow">(${r1},${c1}) ↔ (${r2},${c2})</div>
+          `;
+          stepsContainer.appendChild(step);
+          setTimeout(() => step.classList.add('visible'), 50);
+
+          if (i === pairs.length - 1) {
+            setTimeout(() => {
+              outputText.textContent = `${mode === 'encrypt' ? 'Encrypted' : 'Decrypted'} Text: ${result}`;
+            }, 1000);
+          }
+        }, i * 1000);
+      });
+    }
+  </script>
+</body>
+</html>

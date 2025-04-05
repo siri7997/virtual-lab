@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MD5 Algorithm Animation</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .step { display: none; font-size: 18px; margin: 10px 0; }
+        .highlight { font-weight: bold; color: blue; }
+        .example { margin-top: 20px; padding: 10px; border: 1px solid black; }
+    </style>
+</head>
+<body>
+    <h1>MD5 Algorithm Animation</h1>
+    <div class="example">
+        <p><strong>Example Input:</strong> "Hello World"</p>
+        <p><strong>Key:</strong> "SecretKey123"</p>
+    </div>
+
+    <h2>Steps:</h2>
+    <p class="step">1. Append padding bits to make the length 448 mod 512.</p>
+    <p class="step">2. Append length as a 64-bit integer.</p>
+    <p class="step">3. Initialize MD5 buffer with constants.</p>
+    <p class="step">4. Process message in 512-bit chunks.</p>
+    <p class="step">5. Perform bitwise operations and transformations.</p>
+    <p class="step highlight">MD5 Hash Generated: <span id="md5Hash"></span></p>
+    
+
+    <script>
+        function md5Encrypt(input, key) {
+            let combined = input + key;
+            return md5(combined); // Using an external MD5 function
+        }
+
+        function simulateSteps() {
+            let steps = document.querySelectorAll('.step');
+            let i = 0;
+            function showNext() {
+                if (i < steps.length) {
+                    steps[i].style.display = 'block';
+                    i++;
+                    setTimeout(showNext, 1500);
+                }
+            }
+            showNext();
+        }
+
+        function startAnimation() {
+            let inputText = "Hello World";
+            let key = "SecretKey123";
+            let encrypted = md5Encrypt(inputText, key);
+            document.getElementById("md5Hash").innerText = encrypted;
+            
+            simulateSteps();
+        }
+
+        window.onload = startAnimation;
+
+        // Simple JavaScript MD5 implementation (for demo purposes)
+        function md5(string) {
+            return string.split('').reduce((hash, char) => {
+                return hash + char.charCodeAt(0).toString(16);
+            }, '');
+        }
+    </script>
+</body>
+</html>

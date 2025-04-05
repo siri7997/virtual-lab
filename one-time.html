@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One-Time Pad Cipher</title>
+    <!-- Breadcrumb Navigation -->
+<ul class="breadcrumbs">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="home.html">Cryptography</a></li>
+    <li><a href="home.html#theory" onclick="showContent('theory')">Experiments</a></li>
+</ul>
+
+<!-- Breadcrumbs CSS (Add to your existing CSS) -->
+<style>
+    .breadcrumbs {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        list-style: none;
+        display: flex;
+        gap: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 10px 15px;
+        border-radius: 10px;
+        backdrop-filter: blur(5px);
+        z-index: 2;
+    }
+
+    .breadcrumbs li {
+        display: inline;
+    }
+
+    .breadcrumbs a {
+        text-decoration: none;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .breadcrumbs a:hover {
+        background: rgba(255, 255, 255, 0.4);
+    }
+</style>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            animation: backgroundAnimation 10s infinite alternate;
+        }
+
+        @keyframes backgroundAnimation {
+            0% { background-position: left; }
+            100% { background-position: right; }
+        }
+        p, ul {
+            font-size: 1.2em; 
+        }
+        p { 
+            margin: 2em 0;
+        }
+        p {
+            line-height: 2; 
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+            opacity: 0;
+            animation: fadeIn 1.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .left-menu {
+            width: 250px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .left-menu a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .left-menu a:hover {
+            background-color: #ff9800;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .right-content {
+            flex: 1;
+            padding: 20px;
+            border-left: 1px solid #ccc;
+            background-color: white;
+            opacity: 0;
+            animation: slideIn 1s forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            font-size: 2.5em;
+            animation: bounce 1.5s infinite alternate;
+        }
+        h2 {
+            text-align: center;
+            color: #ffffff;
+            font-size: 2.5em;
+            animation: bounce 1.5s infinite alternate;
+        }
+        .breadcrumb {
+            padding: 10px;
+            background: #fff;
+            margin-bottom: 10px;
+        }
+        .breadcrumb a {
+            text-decoration: none;
+            color: #cad6e3;
+            margin-right: 5px;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        @keyframes bounce {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-10px); }
+        }
+
+        .hidden {
+            display: none;
+        }
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            animation: backgroundAnimation 10s infinite alternate;
+        }
+
+        @keyframes backgroundAnimation {
+            0% { background-position: left; }
+            100% { background-position: right; }
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+            opacity: 0;
+            animation: fadeIn 1.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .left-menu {
+            width: 200px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .left-menu a {
+            display: block;
+            padding: 8px 16px;
+            text-decoration: none;
+            color: #333;
+            margin-bottom: 5px;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .left-menu a:hover {
+            background-color: #ff9800;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .right-content {
+            flex: 1;
+            padding: 20px;
+            border-left: 1px solid #ccc;
+            background-color: white;
+            opacity: 0;
+            animation: slideIn 1s forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        h1 {
+            color: #ffffff;
+            text-align: center;
+            font-size: 2.5em;
+            animation: bounce 1.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-10px); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        p, ul {
+            font-size: 1.2em;
+        }
+        p {
+            margin: 2em 0;
+            line-height: 2;
+        }
+
+        .content-divs {
+            margin-top: 20px;
+            opacity: 0;
+            animation: fadeInContent 1s forwards;
+        }
+
+        @keyframes fadeInContent {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <h1>One-Time Pad Cipher</h1>
+    <div class="container">
+        <div class="left-menu">
+            <a href="#" onclick="showContent('aim')">Aim</a>
+            <a href="#" onclick="showContent('objectives')">Objectives</a>
+            <a href="#" onclick="showContent('procedure')">Procedure</a>
+            <a href="#" onclick="showContent('theory')">Theory</a>
+            <a href="one2.html">Simulation</a>
+        </div>
+        <div class="right-content">
+            <div id="aim" class="hidden content-divs">
+                <h2>Aim</h2>
+                <p>To achieve perfect secrecy in encryption, meaning the cipher text reveals absolutely no information about the plaintext other than its length.<br>
+                This is accomplished by using a key that is completely random and used only once.</p>
+            </div>
+            <div id="objectives" class="hidden content-divs">
+                <h2>Objectives</h2>
+                <p>To provide an unbreakable encryption method.
+                    <br>
+                    To encrypt messages in such a way that frequency analysis is rendered ineffective.
+                    <br>
+                    To ensure that every possible encrypted symbol has an equal chance of representing the same original symbol.
+                    <br>
+                    To guarantee high security by using unique keys for each message, making it nearly impossible for unauthorized parties to decrypt the data without the relevant key.
+                    <br>
+                    To provide confidentiality by ensuring only the sender and receiver can decrypt the message.</p>
+            </div>
+            <div id="procedure" class="hidden content-divs">
+                <h2>Procedure</h2>
+                <p><h3>Key Generation:</h3> 
+                    <br>Create a random secret key (the "one-time pad") that is equal to or longer than the message. The key must be truly random.
+                    <br>
+                    Key Distribution: Securely distribute the one-time pad to the sender and receiver3. This is a significant challenge.
+                    <br>
+                    <h3>Encryption:</h3>
+                    <br>
+                    Assign a numerical value to each character in the plaintext message and the key.
+                    <br>
+                    Combine the plaintext with the key. A common method is to use the XOR operation on each bit of the character with the corresponding bit in the key13. Another method involves modular addition.
+                    <br>
+                    <h3>Transmission:</h3>Send the cipher text.
+                    <br>
+                    <h3>Decryption:</h3> Reverse the encryption process using the same one-time pad. <br>For XOR, simply XOR the cipher text with the key again. For modular addition, subtract the key from the cipher text.
+                    <br>
+                    <h3>Key Destruction:</h3> Destroy the one-time pad after use to ensure it is never reused.</p>
+            </div>
+            <div id="theory" class="hidden content-divs">
+                <h2>Theory</h2>
+                <iframe src="oneth.html" width="100%" height="500px" style="border: none;"></iframe>
+            </div>
+            <div id="simulation" class="hidden content-divs">
+                <h2>Simulation</h2>
+                <p>Run the following simulation...</p>
+            </div>
+            
+        </div>
+    </div>
+    <script>
+        function showContent(id) {
+            let contentDivs = document.querySelectorAll('.content-divs');
+            contentDivs.forEach(div => {
+                div.classList.add('hidden');
+            });
+            let selectedDiv = document.getElementById(id);
+            if (selectedDiv) {
+                selectedDiv.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

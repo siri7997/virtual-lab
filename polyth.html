@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polyalphabetic Cipher Animation</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            border: 2px solid black;
+            margin-top: 20px;
+        }
+        .rules, .example, .formula, .decryption-formula, .encrypted-text {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .encrypted-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h2>Polyalphabetic Cipher (Vigenère Cipher)</h2>
+    <div class="rules">
+        <h3>Rules:</h3>
+        <p>1. Use a repeated key to shift each letter in the plaintext.</p>
+        <p>2. Each letter is shifted according to the corresponding letter in the key.</p>
+        <p>3. If the key is shorter than the plaintext, it repeats.</p>
+    </div>
+    <div class="example">
+        <h3>Example:</h3>
+        <p>Plaintext: ATTACK</p>
+        <p>Key: LEMON (repeated: LEMONL)</p>
+        <p>Encryption: L shifts A to L, E shifts T to X, etc.</p>
+    </div>
+    <div class="formula">
+        <h3>Encryption Formula:</h3>
+        <p>Ciphertext Letter = (Plaintext Letter Index + Key Letter Index) mod 26</p>
+        <p>Ci = (Pi + Ki) mod 26</p>
+    </div>
+    <div class="decryption-formula">
+        <h3>Decryption Formula:</h3>
+        <p>Plaintext Letter = (Ciphertext Letter Index - Key Letter Index + 26) mod 26</p>
+        <p>Pi = (Ci - Ki + 26) mod 26</p>
+    </div>
+    <canvas id="vigenereCanvas" width="600" height="200"></canvas>
+    <div class="encrypted-text" id="encryptedText">Encrypted Text: </div>
+    <script>
+        const canvas = document.getElementById("vigenereCanvas");
+        const ctx = canvas.getContext("2d");
+        const encryptedTextDiv = document.getElementById("encryptedText");
+
+        const plaintext = "ATTACK";
+        const key = "LEMONL";
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        let encryptedText = "";
+        let step = 0;
+
+        function vigenereEncrypt(text, key) {
+            let encrypted = "";
+            for (let i = 0; i < text.length; i++) {
+                let pIndex = alphabet.indexOf(text[i]);
+                let kIndex = alphabet.indexOf(key[i % key.length]);
+                let newIndex = (pIndex + kIndex) % 26;
+                encrypted += alphabet[newIndex];
+            }
+            return encrypted;
+        }
+
+        function drawText() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.font = "20px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            
+            ctx.fillText("Plaintext: " + plaintext, canvas.width / 2, 50);
+            ctx.fillText("Key: " + key, canvas.width / 2, 100);
+            ctx.fillText("Step: " + (step + 1) + " → Encrypting: " + plaintext[step] + " with " + key[step], canvas.width / 2, 150);
+        }
+
+        function animateEncryption() {
+            if (step < plaintext.length) {
+                drawText();
+                encryptedText += vigenereEncrypt(plaintext[step], key[step]);
+                encryptedTextDiv.innerText = "Encrypted Text: " + encryptedText;
+                step++;
+                setTimeout(animateEncryption, 1500);
+            }
+        }
+
+        drawText();
+        setTimeout(animateEncryption, 1500);
+    </script>
+</body>
+</html>

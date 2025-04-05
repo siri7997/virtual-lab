@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caesar Cipher</title>
+<!-- Breadcrumb Navigation -->
+<ul class="breadcrumbs">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="home.html">Cryptography</a></li>
+    <li><a href="home.html#theory" onclick="showContent('theory')">Experiments</a></li>
+</ul>
+
+<!-- Breadcrumbs CSS (Add to your existing CSS) -->
+<style>
+    .breadcrumbs {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        list-style: none;
+        display: flex;
+        gap: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 10px 15px;
+        border-radius: 10px;
+        backdrop-filter: blur(5px);
+        z-index: 2;
+    }
+
+    .breadcrumbs li {
+        display: inline;
+    }
+
+    .breadcrumbs a {
+        text-decoration: none;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .breadcrumbs a:hover {
+        background: rgba(255, 255, 255, 0.4);
+    }
+</style>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            animation: backgroundAnimation 10s infinite alternate;
+        }
+
+        @keyframes backgroundAnimation {
+            0% { background-position: left; }
+            100% { background-position: right; }
+        }
+        p, ul {
+            font-size: 1.2em; 
+        }
+        p { 
+            margin: 2em 0;
+        }
+        p {
+            line-height: 2; 
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+            opacity: 0;
+            animation: fadeIn 1.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .left-menu {
+            width: 250px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .left-menu a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .left-menu a:hover {
+            background-color: #ff9800;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .right-content {
+            flex: 1;
+            padding: 20px;
+            border-left: 1px solid #ccc;
+            background-color: white;
+            opacity: 0;
+            animation: slideIn 1s forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            font-size: 2.5em;
+            animation: bounce 1.5s infinite alternate;
+        }
+        h2 {
+            text-align: center;
+            color: #ffffff;
+            font-size: 2.5em;
+            animation: bounce 1.5s infinite alternate;
+        }
+        .breadcrumb {
+            padding: 10px;
+            background: #fff;
+            margin-bottom: 10px;
+        }
+        .breadcrumb a {
+            text-decoration: none;
+            color: #cad6e3;
+            margin-right: 5px;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        @keyframes bounce {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-10px); }
+        }
+
+        .hidden {
+            display: none;
+        }
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            animation: backgroundAnimation 10s infinite alternate;
+        }
+
+        @keyframes backgroundAnimation {
+            0% { background-position: left; }
+            100% { background-position: right; }
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+            opacity: 0;
+            animation: fadeIn 1.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .left-menu {
+            width: 200px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .left-menu a {
+            display: block;
+            padding: 8px 16px;
+            text-decoration: none;
+            color: #333;
+            margin-bottom: 5px;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .left-menu a:hover {
+            background-color: #ff9800;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .right-content {
+            flex: 1;
+            padding: 20px;
+            border-left: 1px solid #ccc;
+            background-color: white;
+            opacity: 0;
+            animation: slideIn 1s forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        h1 {
+            color: #ffffff;
+            text-align: center;
+            font-size: 2.5em;
+            animation: bounce 1.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-10px); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        p, ul {
+            font-size: 1.2em;
+        }
+        p {
+            margin: 2em 0;
+            line-height: 2;
+        }
+
+        .content-divs {
+            margin-top: 20px;
+            opacity: 0;
+            animation: fadeInContent 1s forwards;
+        }
+
+        @keyframes fadeInContent {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Caesar Cipher</h1>
+    <div class="container">
+        <div class="left-menu">
+            <a href="#" onclick="showContent('aim')">Aim</a>
+            <a href="#" onclick="showContent('objectives')">Objectives</a>
+            <a href="#" onclick="showContent('procedure')">Procedure</a>
+            <a href="#" onclick="showContent('theory')">Theory</a>
+            <a href="caeser2.html">Simulation</a>
+            
+        </div>
+        <div class="right-content">
+            <div id="aim" class="hidden content-divs">
+                <h2>Aim</h2>
+                <p>The Caesar Cipher is one of the simplest and oldest methods of encrypting messages. This technique involves shifting the letters of the alphabet by a fixed number of places. For example, with a shift of three, the letter ‘A’ becomes ‘D’, ‘B’ becomes ‘E’, and so on. </p>
+            </div>
+            <div id="objectives" class="hidden content-divs">
+                <h2>Objectives</h2>
+                <p>The objectives are :
+                    <br>
+                    Convert plaintext to cipher text The main goal of the Caesar cipher is to convert readable text (plaintext) into an unreadable form (cipher text).
+                    <br>
+                    Simple Encryption The Caesar Cipher is one of the earliest and simplest methods of encryption3. It was used by Julius Caesar to protect his communications during military operations.
+                    <br>
+                    Foundation for Modern Cryptography The Caesar cipher introduced the idea of substituting letters, which is a basic principle in cryptography and laid the foundation for more advanced encryption methods.
+
+
+                </p>
+            </div>
+            <div id="procedure" class="hidden content-divs">
+                <h2>Procedure</h2>
+                <p>The encryption can be represented using modular arithmetic by first transforming the letters into numbers, according to the scheme, A = 0, B = 1,…, Z = 25. Encryption of a letter by a shift n can be described mathematically as. 
+                    <br>For example, if the shift is 3, then the letter A would be replaced by the letter D, B would become E, C would become F, and so on. The alphabet is wrapped around so that after Z, it starts back at A.
+                    <br>Here is an example of how to use the Caesar cipher to encrypt the message “HELLO” with a shift of 3:
+                    <br>Write down the plaintext message: HELLO
+                    <br>Choose a shift value. In this case, we will use a shift of 3.
+                    <br>Replace each letter in the plaintext message with the letter that is three positions to the right in the alphabet.</p>
+            </div>
+            <div id="theory" class="hidden content-divs">
+                <h2>Theory</h2>
+                <iframe src="caeth.html" width="100%" height="500px" style="border: none;"></iframe>
+            </div>
+            <div id="simulation" class="hidden content-divs">
+                <h2>Simulation</h2>
+                <p><a href="caeser2.html"></a></p>
+            </div>
+        </div>
+    </div>
+    <script>
+        function showContent(id) {
+            let contentDivs = document.querySelectorAll('.content-divs');
+            contentDivs.forEach(div => {
+                div.classList.add('hidden');
+            });
+            let selectedDiv = document.getElementById(id);
+            if (selectedDiv) {
+                selectedDiv.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

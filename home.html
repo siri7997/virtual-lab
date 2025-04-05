@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secured Computing</title>
+    <!-- Breadcrumb Navigation -->
+<ul class="breadcrumbs">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="home.html">Cryptography</a></li>
+    <li><a href="#" onclick="showContent('theory')">Experiments</a></li>
+</ul>
+
+<!-- Breadcrumbs CSS (Add to your existing CSS) -->
+<style>
+    .breadcrumbs {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        list-style: none;
+        display: flex;
+        gap: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 10px 15px;
+        border-radius: 10px;
+        backdrop-filter: blur(5px);
+        z-index: 2;
+    }
+
+    .breadcrumbs li {
+        display: inline;
+    }
+
+    .breadcrumbs a {
+        text-decoration: none;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .breadcrumbs a:hover {
+        background: rgba(255, 255, 255, 0.4);
+    }
+</style>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            animation: backgroundAnimation 10s infinite alternate;
+        }
+
+        @keyframes backgroundAnimation {
+            0% { background-position: left; }
+            100% { background-position: right; }
+        }
+        p, ul {
+            font-size: 1.2em; 
+        }
+        p { 
+            margin: 2em 0;
+        }
+        p {
+            line-height: 2; 
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+            opacity: 0;
+            animation: fadeIn 1.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .left-menu {
+            width: 250px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .left-menu a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .left-menu a:hover {
+            background-color: #ff9800;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .right-content {
+            flex: 1;
+            padding: 20px;
+            border-left: 1px solid #ccc;
+            background-color: white;
+            opacity: 0;
+            animation: slideIn 1s forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            font-size: 2.5em;
+            animation: bounce 1.5s infinite alternate;
+        }
+        h2 {
+            text-align: center;
+            color: #ffffff;
+            font-size: 2.5em;
+            animation: bounce 1.5s infinite alternate;
+        }
+        .breadcrumb {
+            padding: 10px;
+            background: #fff;
+            margin-bottom: 10px;
+        }
+        .breadcrumb a {
+            text-decoration: none;
+            color: #cad6e3;
+            margin-right: 5px;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        @keyframes bounce {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-10px); }
+        }
+
+        .hidden {
+            display: none;
+        }
+        
+        /* Experiment List Styling */
+        #experiment-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        #experiment-list li {
+            margin-bottom: 10px;
+        }
+
+        #experiment-list a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        #experiment-list a:hover {
+            color: #0056b3;
+        }
+        /* Style for the feedback form */
+        #feedbackForm {
+            margin-top: 20px;
+        }
+        
+        #feedbackForm label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        
+        #feedbackForm input[type="radio"] {
+            margin-right: 5px;
+        }
+        
+        #feedbackForm textarea {
+            width: 100%;
+            height: 100px;
+            margin-top: 10px;
+        }
+        
+        #feedbackForm button {
+            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        
+        #feedbackForm button:hover {
+            background-color: #45a049;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>Secured Computing</h1>
+    <h2>Cryptographic Labs</h2>
+    <div class="container">
+        <div class="left-menu">
+            <a href="#" onclick="showContent('aim')">Introduction</a>
+            <a href="#" onclick="showContent('objectives')">Objectives</a>
+            <a href="#" onclick="showContent('procedure')">Target Audience</a>
+            <a href="#" onclick="showContent('theory')">List Of Experiments</a>
+            <a href="#" onclick="showContent('reference')">Feedback</a>
+        </div>
+        
+        <div class="right-content">
+            <div id="aim" class="hidden content-divs">
+                <h2>Introduction</h2>
+                <p>Cryptography is the study of techniques for preventing access to sensitive data by parties who are not authorized to access the data.</p>
+            </div>
+
+            <div id="objectives" class="hidden content-divs">
+                <h2>Objectives</h2>
+                <p>Confidentiality
+                    <br>
+                    Integrity
+                    <br>Authentication 
+                    <br>Non-repudiation are key objectives of cryptography.</p>
+            </div>
+
+            <div id="procedure" class="hidden content-divs">
+                <h2>Target Audience</h2>
+                <p>Senior undergraduate and postgraduate students
+                    <br>individuals interested in cryptography
+                    <br>professionals
+                    <br>researchers.</p>
+            </div>
+
+            <div id="theory" class="hidden content-divs">
+                <h2>List Of Experiments</h2>
+                    <ul id="experiment-list">
+                        <li><a href="caeser.html">Caesar Cipher</a></li>
+                        <li><a href="mono.html">MonoAlphabetic Cipher</a></li>
+                        <li><a href="poly.html">PolyAlphabetic Cipher</a></li>
+                        <li><a href="rail.html">Rail Fence Cipher</a></li>
+                        <li><a href="hill.html">Hill Cipher</a></li>
+                        <li><a href="play.html">Play Fair Cipher</a></li>
+                        <li><a href="columnar.html">Columnar Cipher</a></li>
+                        <li><a href="one-time.html">One-Time Pad</a></li>
+                        <li><a href="DES.html">DES (Data Encryption Standard)</a></li>
+                        <li><a href="AES.html">AES (Advanced Encryption Standard)</a></li>
+                        <li><a href="MD5.html">MD5 (Message Digest 5)</a></li>
+                    </ul>
+                
+            </div>
+
+            <div id="reference" class="hidden content-divs">
+                <h2>Feedback</h2>
+                <form id="feedbackForm" onsubmit="return submitFeedback(event);">
+                    <label for="rating">Rate your experience (1 to 5):</label>
+                    <div>
+                        <label><input type="radio" name="rating" value="1"> 1</label>
+                        <label><input type="radio" name="rating" value="2"> 2</label>
+                        <label><input type="radio" name="rating" value="3"> 3</label>
+                        <label><input type="radio" name="rating" value="4"> 4</label>
+                        <label><input type="radio" name="rating" value="5"> 5</label>
+                    </div>
+
+                    <label for="comments">Additional Comments:</label>
+                    <textarea id="comments" name="comments" placeholder="Your feedback..."></textarea>
+
+                    <button type="submit">Submit Feedback</button>
+                </form>
+
+                <!-- Thank You Message -->
+                <div id="thankYouMessage" class="hidden">
+                    <h3>Thank You!</h3>
+                    <p>Your feedback has been submitted successfully.</p>
+                </div>
+
+        </div>
+
+    </div> <!-- End of right-content -->
+</div> <!-- End of container -->
+
+<!-- JavaScript -->
+<script>
+    function showContent(id) {
+        let contentDivs = document.querySelectorAll('.content-divs');
+        contentDivs.forEach(div => {
+                div.classList.add('hidden');
+        });
+        let selectedDiv = document.getElementById(id);
+        if (selectedDiv) {
+            selectedDiv.classList.remove('hidden');
+        }
+    }
+
+    function submitFeedback(event) {
+           event.preventDefault(); // Prevent form submission
+           document.getElementById('feedbackForm').reset(); // Reset form fields
+        
+           // Hide feedback form and show thank you message
+        document.getElementById('reference').classList.add('hidden');
+        document.getElementById('thankYouMessage').classList.remove('hidden');
+        
+           return false; // Prevent page refresh
+    }
+</script>
+
+</body>
+</html>
+

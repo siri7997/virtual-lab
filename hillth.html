@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hill Cipher Animation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .step {
+            display: none;
+            font-size: 20px;
+            margin: 10px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .formula {
+            display: none;
+            font-weight: bold;
+            font-size: 22px;
+            color: darkblue;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hill Cipher</h1>
+    
+    <div class="step">1️⃣ Given Plaintext: <b>CD</b> → Numerical Values: C = 2, D = 3</div>
+    <div class="step">2️⃣ Key Matrix: <br> [ 2 3 ] <br> [ 3 4 ]</div>
+    <div class="step">3️⃣ Multiply Key Matrix with Plaintext Vector:<br> (2×2 + 3×3) = 13 <br> (3×2 + 4×3) = 18</div>
+    <div class="step">4️⃣ Apply mod 26: <br> [13, 18] → N, S</div>
+    <div class="step">5️⃣ Ciphertext: <b>NS</b></div>
+    
+    <div class="formula">🔒 Encryption Formula: <br> <b>C = K × P mod 26</b></div>
+    <div class="formula">🔑 Decryption Formula: <br> <b>P = K<sup>-1</sup> × C mod 26</b></div>
+    
+    <script>
+        let steps = document.querySelectorAll('.step');
+        let formulas = document.querySelectorAll('.formula');
+        let delay = 2000;
+        
+        steps.forEach((step, index) => {
+            setTimeout(() => {
+                step.style.display = 'block';
+            }, delay * (index + 1));
+        });
+        
+        setTimeout(() => {
+            formulas.forEach(formula => formula.style.display = 'block');
+        }, delay * (steps.length + 1));
+    </script>
+</body>
+</html>

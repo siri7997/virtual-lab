@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polyalphabetic Cipher</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 45%;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 { text-align: center; }
+        label, input, textarea { display: block; width: 100%; margin-top: 10px; }
+        button {
+            padding: 10px;
+            width: 48%;
+            margin-top: 20px;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+        button:hover { background-color: #0056b3; }
+        #steps {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 45%;
+            overflow-y: auto;
+            max-height: 90vh;
+            font-size: 1.2em; /* Increased text size */
+        }
+        .step {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            animation: fadeIn 1s;
+            font-family: monospace;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Polyalphabetic Cipher</h1>
+        <label for="keyInput">Enter Key:</label>
+        <input type="text" id="keyInput" placeholder="e.g., KEY">
+        <label for="text">Enter Text:</label>
+        <textarea id="text" rows="2" placeholder="Enter text..."></textarea>
+        <div style="display: flex; justify-content: space-between;">
+            <button onclick="performCipher('encrypt')">Encrypt</button>
+            <button onclick="performCipher('decrypt')">Decrypt</button>
+        </div>
+    </div>
+    <div id="steps" class="container">
+        <h2>Steps:</h2>
+        <div id="output"></div>
+    </div>
+    <script>
+        function displayStep(step) {
+            let output = document.getElementById('output');
+            let div = document.createElement('div');
+            div.classList.add('step');
+            div.innerHTML = step;
+            output.appendChild(div);
+        }
+
+        function polyCipher(text, key, action) {
+            document.getElementById('output').innerHTML = "";
+            text = text.toUpperCase().replace(/[^A-Z]/g, '');
+            key = key.toUpperCase().replace(/[^A-Z]/g, '');
+            if (key.length === 0) {
+                alert("Key cannot be empty!");
+                return;
+            }
+
+            displayStep(`<b>Step 1:</b> Repeat the Key to Match Text Length`);
+            let fullKey = "";
+            for (let i = 0; i < text.length; i++) {
+                fullKey += key[i % key.length];
+            }
+            displayStep(`Key Extended: ${fullKey}`);
+
+            displayStep(`<b>Step 2:</b> Convert Characters to Alphabet Positions`);
+            let result = "";
+            for (let i = 0; i < text.length; i++) {
+                let textChar = text[i];
+                let keyChar = fullKey[i];
+                let textPos = textChar.charCodeAt(0) - 65;
+                let keyPos = keyChar.charCodeAt(0) - 65;
+                
+                let newPos;
+                if (action === 'encrypt') {
+                    newPos = (textPos + keyPos) % 26;
+                    displayStep(`${textChar} (${textPos}) + ${keyChar} (${keyPos}) = (${textPos} + ${keyPos}) mod 26 = ${newPos}`);
+                } else {
+                    newPos = (textPos - keyPos + 26) % 26;
+                    displayStep(`${textChar} (${textPos}) - ${keyChar} (${keyPos}) = (${textPos} - ${keyPos} + 26) mod 26 = ${newPos}`);
+                }
+                
+                let newChar = String.fromCharCode(newPos + 65);
+                result += newChar;
+                displayStep(`Resulting Character: ${newChar}`);
+            }
+
+            displayStep(`<b>Final Output:</b> ${result}`);
+        }
+
+        function performCipher(action) {
+            let text = document.getElementById('text').value;
+            let key = document.getElementById('keyInput').value;
+            if (text.length === 0 || key.length === 0) {
+                alert("Please enter both text and key.");
+                return;
+            }
+            polyCipher(text, key, action);
+        }
+    </script>
+</body>
+</html>

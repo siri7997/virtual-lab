@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DES Flowchart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+        .block {
+            width: 250px;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 5px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+        }
+        .permutation { background-color: lightblue; }
+        .round { background-color: lightyellow; }
+        .key { background-color: lightgreen; }
+        .final { background-color: lightcoral; }
+        .arrow {
+            font-size: 2em;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .side-text {
+            font-size: 0.9em;
+            position: absolute;
+            left: -150px;
+            width: 120px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Data Encryption Standard (DES) Flowchart</h2>
+
+    <div class="container">
+        <div class="block permutation" id="plain-text">64-bit Plain Text</div>
+        <div class="arrow" id="arrow1">↓</div>
+
+        <div class="block permutation" id="initial-perm">Initial Permutation</div>
+        <div class="arrow" id="arrow2">↓</div>
+
+        <div class="block round" id="split-blocks">32-bit LPT & 32-bit RPT</div>
+        <div class="side-text" style="top: 160px;">64-bit Key</div>
+        <div class="block key" id="perm-choice1">Permuted Choice 1</div>
+
+        <div class="arrow" id="arrow3">↓</div>
+        <div class="block round" id="round1">Round 1</div>
+
+        <div class="side-text" style="top: 240px;">56-bit</div>
+        <div class="block key" id="left-shift">Left Circular Shift</div>
+
+        <div class="arrow" id="arrow4">↓</div>
+        <div class="block round" id="round16">Round 16</div>
+
+        <div class="side-text" style="top: 330px;">56-bit</div>
+        <div class="block key" id="perm-choice2">Permuted Choice 2</div>
+
+        <div class="arrow" id="arrow5">↓</div>
+        <div class="block final" id="final-perm">Final Permutation</div>
+        <div class="arrow" id="arrow6">↓</div>
+        <div class="block final" id="cipher-text">64-bit Cipher Text</div>
+    </div>
+
+    <script>
+        function animateBlocks() {
+            let elements = [
+                "plain-text", "arrow1", "initial-perm", "arrow2", "split-blocks",
+                "perm-choice1", "arrow3", "round1", "left-shift", "arrow4",
+                "round16", "perm-choice2", "arrow5", "final-perm", "arrow6", "cipher-text"
+            ];
+            
+            elements.forEach((id, index) => {
+                setTimeout(() => {
+                    document.getElementById(id).style.opacity = 1;
+                    document.getElementById(id).style.transform = "translateY(0)";
+                }, index * 1000);
+            });
+        }
+
+        window.onload = animateBlocks;
+    </script>
+
+</body>
+</html>

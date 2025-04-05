@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monoalphabetic Cipher</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 45%;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 { text-align: center; }
+        label, input, textarea { display: block; width: 100%; margin-top: 10px; }
+        button {
+            padding: 10px;
+            width: 48%;
+            margin-top: 20px;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+        button:hover { background-color: #0056b3; }
+        #steps {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 45%;
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+        .step {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            animation: fadeIn 1s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Monoalphabetic Cipher</h1>
+        <label for="keyInput">Enter Key (Any Length):</label>
+        <input type="text" id="keyInput" placeholder="e.g., QWERTYUIO">
+        <label for="text">Enter Text:</label>
+        <textarea id="text" rows="2" placeholder="Enter text..."></textarea>
+        <div style="display: flex; justify-content: space-between;">
+            <button onclick="performCipher('encrypt')">Encrypt</button>
+            <button onclick="performCipher('decrypt')">Decrypt</button>
+        </div>
+    </div>
+    <div id="steps" class="container">
+        <h2>Steps:</h2>
+        <div id="output"></div>
+    </div>
+    <script>
+        function displayStep(step) {
+            let output = document.getElementById('output');
+            let div = document.createElement('div');
+            div.classList.add('step');
+            div.innerHTML = step;
+            output.appendChild(div);
+        }
+
+        function performCipher(action) {
+            document.getElementById('output').innerHTML = "";
+            const inputKey = document.getElementById('keyInput').value.toUpperCase();
+            const text = document.getElementById('text').value.toUpperCase();
+            
+            if (!inputKey || !text) {
+                alert("Please enter both text and key.");
+                return;
+            }
+            
+            let keySet = new Set(inputKey);
+            let uniqueKey = Array.from(keySet).join('');
+            displayStep(`**Step 1: Process User Key**`);
+            displayStep(`Unique Key After Removing Duplicates: ${uniqueKey}`);
+            
+            for (let charCode = 65; charCode <= 90; charCode++) {
+                let char = String.fromCharCode(charCode);
+                if (!uniqueKey.includes(char)) {
+                    uniqueKey += char;
+                }
+            }
+            displayStep(`**Step 2: Complete Key Alphabet:** ${uniqueKey}`);
+            
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                let char = text[i];
+                if (/[A-Z]/.test(char)) {
+                    let index;
+                    if (action === 'encrypt') {
+                        index = char.charCodeAt(0) - 65;
+                        result += uniqueKey[index];
+                        displayStep(`Encrypting '${char}': Original Position ${index} → Substituted with '${uniqueKey[index]}'`);
+                    } else {
+                        index = uniqueKey.indexOf(char);
+                        if (index !== -1) {
+                            result += String.fromCharCode(index + 65);
+                            displayStep(`Decrypting '${char}': Substituted Position ${index} → Original '${String.fromCharCode(index + 65)}'`);
+                        }
+                    }
+                } else {
+                    result += char;
+                }
+            }
+            displayStep(`**Final Output:** ${result}`);
+        }
+    </script>
+</body>
+</html>

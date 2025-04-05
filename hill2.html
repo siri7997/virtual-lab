@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hill Cipher Animated Steps</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 45%;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 { text-align: center; }
+        label, select, input, textarea { display: block; width: 100%; margin-top: 10px; }
+        button {
+            padding: 10px;
+            width: 48%;
+            margin-top: 20px;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+        button:hover { background-color: #0056b3; }
+        #steps {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 45%;
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+        .step {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            animation: fadeIn 1s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hill Cipher</h1>
+        <label for="matrixSize">Select Matrix Size:</label>
+        <select id="matrixSize">
+            <option value="2">2x2</option>
+            <option value="3">3x3 (Encryption Only)</option>
+        </select>
+        <label for="keyInput">Enter Key:</label>
+        <input type="text" id="keyInput" placeholder="e.g., GYBNQKURP">
+        <label for="text">Enter Text:</label>
+        <textarea id="text" rows="2" placeholder="Enter text..."></textarea>
+        <div style="display: flex; justify-content: space-between;">
+            <button onclick="performCipher('encrypt')">Encrypt</button>
+            <button onclick="performCipher('decrypt')">Decrypt</button>
+        </div>
+    </div>
+    <div id="steps" class="container">
+        <h2>Steps:</h2>
+        <div id="output"></div>
+    </div>
+    <script>
+        async function displayStep(step) {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    let output = document.getElementById('output');
+                    let div = document.createElement('div');
+                    div.classList.add('step');
+                    div.innerHTML = step;
+                    output.appendChild(div);
+                    resolve();
+                }, 1000);
+            });
+        }
+
+        async function hillCipher(text, key, action) {
+            document.getElementById('output').innerHTML = "";
+            text = text.toUpperCase().replace(/[^A-Z]/g, '');
+            key = key.toUpperCase().replace(/[^A-Z]/g, '');
+            
+            let size = Math.sqrt(key.length);
+            if (size % 1 !== 0) {
+                alert("Invalid key length!");
+                return;
+            }
+            
+            await displayStep(`**Step 1: Convert Key to Matrix**`);
+            let keyMatrix = [];
+            let k = 0;
+            for (let i = 0; i < size; i++) {
+                keyMatrix[i] = [];
+                for (let j = 0; j < size; j++) {
+                    let charCode = key[k].charCodeAt(0) - 65;
+                    keyMatrix[i][j] = charCode;
+                    await displayStep(`Key Character: ${key[k]}, Position: ${charCode}`);
+                    k++;
+                }
+            }
+
+            await displayStep(`**Step 2: Convert Text to Matrix**`);
+            let textMatrix = [];
+            for (let i = 0; i < text.length; i += size) {
+                let block = [];
+                for (let j = 0; j < size; j++) {
+                    let charCode = text[i + j] ? text[i + j].charCodeAt(0) - 65 : 23;
+                    block.push(charCode);
+                    await displayStep(`Text Character: ${text[i + j] || 'X'}, Position: ${charCode}`);
+                }
+                textMatrix.push(block);
+            }
+            
+            await displayStep(`**Step 3: Perform Matrix Multiplication**`);
+            let resultMatrix = [];
+            for (let i = 0; i < textMatrix.length; i++) {
+                let block = [];
+                for (let j = 0; j < size; j++) {
+                    let sum = 0;
+                    for (let k = 0; k < size; k++) {
+                        let product = keyMatrix[j][k] * textMatrix[i][k];
+                        await displayStep(`Multiply ${keyMatrix[j][k]} * ${textMatrix[i][k]} = ${product}`);
+                        sum += product;
+                    }
+                    let modResult = sum % 26;
+                    block.push(modResult);
+                    await displayStep(`Modulo 26: ${modResult}`);
+                }
+                resultMatrix.push(block);
+            }
+
+            await displayStep(`**Step 4: Convert Result to Text**`);
+            let output = "";
+            for (let i = 0; i < resultMatrix.length; i++) {
+                for (let j = 0; j < size; j++) {
+                    let char = String.fromCharCode(resultMatrix[i][j] + 65);
+                    output += char;
+                    await displayStep(`Character: ${char}`);
+                }
+            }
+            await displayStep(`**Final Output:** ${output}`);
+        }
+
+        function performCipher(action) {
+            let text = document.getElementById('text').value;
+            let key = document.getElementById('keyInput').value;
+            if (text.length === 0 || key.length === 0) {
+                alert("Please enter both text and key.");
+                return;
+            }
+            hillCipher(text, key, action);
+        }
+    </script>
+</body>
+</html>

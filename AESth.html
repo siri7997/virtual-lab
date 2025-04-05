@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AES Encryption Animation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .step {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-left: 5px solid #007bff;
+            background-color: #eef6ff;
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        .step h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>AES Encryption Steps</h1>
+    <div class="container">
+        <h2>Example: Encrypting "Hello World!!!" with AES</h2>
+    </div>
+    <div id="stepsContainer" class="container">
+        <h2>Steps</h2>
+    </div>
+
+    <script>
+        function displaySteps() {
+            const plaintext = "Hello World!!!";
+            const key = "0123456789abcdef";
+            const iv = "fedcba9876543210";
+
+            displayStep("Plaintext", plaintext);
+            displayStep("Key", key);
+            displayStep("Generated IV (Initialization Vector)", iv);
+
+            displayStep("Step 1: Key Expansion", "Generate round keys from the initial key.");
+            displayStep("Step 2: Initial Round - AddRoundKey", "XOR plaintext with the first round key.");
+            displayStep("Step 3: Main Rounds (9 Rounds)", "Each round consists of SubBytes, ShiftRows, MixColumns, and AddRoundKey.");
+            displayStep("Step 4: Final Round (No MixColumns)", "Perform SubBytes, ShiftRows, and AddRoundKey.");
+            displayStep("Step 5: Ciphertext", "Encrypted output: Example - 0x3a7b6f92d1c5e8ab...");
+
+            animateSteps();
+        }
+
+        function displayStep(title, content) {
+            const stepsContainer = document.getElementById('stepsContainer');
+            
+            const stepDiv = document.createElement('div');
+            stepDiv.classList.add('step');
+
+            const stepTitle = document.createElement('h3');
+            stepTitle.textContent = title;
+
+            const stepContent = document.createElement('p');
+            stepContent.textContent = content;
+
+            stepDiv.appendChild(stepTitle);
+            stepDiv.appendChild(stepContent);
+            
+            stepsContainer.appendChild(stepDiv);
+        }
+
+        function animateSteps() {
+            const steps = document.querySelectorAll('.step');
+            steps.forEach((step, index) => {
+                setTimeout(() => {
+                    step.style.transition = 'all 0.5s ease-in-out';
+                    step.style.transform = 'translateX(0)';
+                    step.style.opacity = '1';
+                }, index * 700);
+            });
+        }
+
+        displaySteps();
+    </script>
+</body>
+</html>

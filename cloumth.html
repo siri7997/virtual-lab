@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Columnar Transposition Cipher Animation</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; }
+        .grid-container { display: inline-grid; grid-template-columns: repeat(4, 50px); gap: 5px; margin-top: 20px; }
+        .cell { width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;
+                border: 1px solid black; font-size: 20px; background-color: white; }
+        .highlight { background-color: yellow; transition: 0.5s; }
+        .output { font-size: 24px; font-weight: bold; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h2>Columnar Transposition Cipher Animation</h2>
+    <h1>EXAMPLE: GeeksforGeeks</h1>
+    <p>Keyword: HACK (Order: 3,1,2,4)</p>
+    
+    <div id="grid" class="grid-container"></div>
+    <p class="output" id="encryptedText"></p>
+    
+    <script>
+        const keywordOrder = [3, 1, 2, 4];
+        const plaintext = "Geeks_for_Geeks".replace(/_/g, " ");
+        const rows = 4;
+        const cols = 4;
+        const grid = document.getElementById("grid");
+        const encryptedTextElement = document.getElementById("encryptedText");
+        let encryptedText = "";
+        
+        let matrix = [];
+        let index = 0;
+        
+        // Create matrix and populate grid
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                let char = plaintext[index] || " ";
+                let cell = document.createElement("div");
+                cell.className = "cell";
+                cell.innerText = char;
+                grid.appendChild(cell);
+                if (!matrix[c]) matrix[c] = [];
+                matrix[c][r] = cell;
+                index++;
+            }
+        }
+        
+        // Animate column selection based on keyword order
+        function animateEncryption() {
+            let step = 0;
+            function highlightColumn() {
+                if (step < keywordOrder.length) {
+                    let col = keywordOrder[step] - 1;
+                    matrix[col].forEach((cell, i) => {
+                        setTimeout(() => {
+                            cell.classList.add("highlight");
+                            encryptedText += cell.innerText;
+                            encryptedTextElement.innerText = "Encrypted Text: " + encryptedText;
+                        }, i * 500);
+                    });
+                    setTimeout(() => {
+                        matrix[col].forEach(cell => cell.classList.remove("highlight"));
+                        step++;
+                        highlightColumn();
+                    }, 2000);
+                }
+            }
+            highlightColumn();
+        }
+        
+        setTimeout(animateEncryption, 1000);
+    </script>
+</body>
+</html>

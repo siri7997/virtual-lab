@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caesar Cipher Step-by-Step</title>
+  <style>
+    
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f9;
+      padding: 20px;
+    }
+    .input-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      flex: 1;
+    }
+    .steps-container {
+      flex: 1.5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .output-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .step {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    }
+    .box {
+      width: 60px;
+      height: 60px;
+      border: 2px solid #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 20px;
+      background-color: #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .arrow {
+      font-size: 24px;
+    }
+    input, button, select {
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="input-container">
+    <label for="text">Enter text:</label>
+    <input type="text" id="text" placeholder="Enter text" />
+    <label for="shift">Enter shift value:</label>
+    <input type="number" id="shift" placeholder="Enter shift" />
+    <label for="mode">Choose mode:</label>
+    <select id="mode">
+      <option value="encrypt">Encrypt</option>
+      <option value="decrypt">Decrypt</option>
+    </select>
+    <button onclick="startCipher()">Start</button>
+    <div class="output-container" id="output-container"></div>
+  </div>
+  <div class="steps-container" id="steps-container"></div>
+
+  <script>
+    function caesarCipher(text, shift, mode) {
+      return text
+        .split("")
+        .map((char) => {
+          if (char.match(/[a-z]/i)) {
+            const code = char.charCodeAt(0);
+            const shiftAmount = code >= 65 && code <= 90 ? 65 : 97;
+            const newShift = mode === "decrypt" ? -shift : shift;
+            return String.fromCharCode(((code - shiftAmount + newShift + 26) % 26) + shiftAmount);
+          }
+          return char;
+        })
+        .join("");
+    }
+
+    function displaySteps(text, shift, mode) {
+      const stepsContainer = document.getElementById("steps-container");
+      const outputContainer = document.getElementById("output-container");
+      stepsContainer.innerHTML = "";
+      outputContainer.innerHTML = "";
+
+      let resultText = "";
+      text.split("").forEach((char, i) => {
+        setTimeout(() => {
+          const code = char.charCodeAt(0);
+          const isUpperCase = code >= 65 && code <= 90;
+          const shiftAmount = isUpperCase ? 65 : 97;
+          const newShift = mode === "decrypt" ? -shift : shift;
+          const shiftedCode = ((code - shiftAmount + newShift + 26) % 26) + shiftAmount;
+          const shiftedChar = String.fromCharCode(shiftedCode);
+          resultText += shiftedChar;
+
+          const stepDiv = document.createElement("div");
+          stepDiv.classList.add("step");
+          stepDiv.innerHTML = `
+            <div class="box">${char}</div>
+            <div class="arrow">→</div>
+            <div class="box">${code}</div>
+            <div class="arrow">+${newShift}</div>
+            <div class="box">${shiftedCode}</div>
+            <div class="arrow">→</div>
+            <div class="box">${shiftedChar}</div>
+          `;
+
+          stepsContainer.appendChild(stepDiv);
+          setTimeout(() => {
+            stepDiv.style.opacity = "1";
+            stepDiv.style.transform = "translateY(0)";
+          }, 50);
+
+          if (i === text.length - 1) {
+            setTimeout(() => {
+              outputContainer.textContent = `${mode.charAt(0).toUpperCase() + mode.slice(1)}ed Text: ${resultText}`;
+            }, 1000);
+          }
+        }, i * 1000);
+      });
+    }
+
+    function startCipher() {
+      const text = document.getElementById("text").value;
+      const shift = parseInt(document.getElementById("shift").value, 10);
+      const mode = document.getElementById("mode").value;
+      if (text && !isNaN(shift)) {
+        displaySteps(text, shift, mode);
+      }
+    }
+  </script>
+</body>
+</html>
